@@ -22,8 +22,46 @@ const register = async (req, res, next) => {
 	}
 }
 
-const login = (req, res, next) => {
-	res.send("Login route")
+const login = async (req, res, next) => {
+	const { email, password } = req.body
+
+	if (!email || !password) {
+		return res.status(400).json({
+			success: false,
+			error: "Please provide email and password"
+		})
+	}
+
+	try {
+		const user = await User.findOne({ email }).select("+password")
+
+		if (!user) {
+			return res.status(404).json({
+				success: false,
+				error: "Invalid credentials"
+			})
+		}
+
+		const isMatch = await user.matchPassword(password)
+
+		if (!isMatch) {
+			return res.status(404).json({
+				success: false,
+				error: "Invalid credentials"
+			})
+		}
+
+		return res.status(200).json({
+			success: true,
+			token: 'qweqfhcbfgpkm'
+		})
+
+	} catch(error) {
+		return res.status(500).json({
+			success: false,
+			error: error.message
+		})
+	}
 }
 
 const forgotPassword = (req, res, next) => {
