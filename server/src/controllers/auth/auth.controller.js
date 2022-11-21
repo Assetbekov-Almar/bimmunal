@@ -11,10 +11,7 @@ const register = async (req, res, next) => {
 			password
 		})
 
-		res.status(201).json({
-			success: true,
-			user
-		})
+		sendToken(user, 201, res)
 	} catch(error) {
 		next(error)
 	}
@@ -40,11 +37,7 @@ const login = async (req, res, next) => {
 			return next(new ErrorResponse("Invalid credentials", 401))
 		}
 
-		return res.status(200).json({
-			success: true,
-			token: 'qweqfhcbfgpkm'
-		})
-
+		sendToken(user, 200, res)
 	} catch(error) {
 		next(error)
 	}
@@ -63,4 +56,12 @@ module.exports = {
 	login,
 	forgotPassword,
 	resetPassword
+}
+
+const sendToken = (user, statusCode, res) => {
+	const token = user.getSignedToken()
+	res.status(statusCode).json({
+		success: true,
+		token
+	})
 }
