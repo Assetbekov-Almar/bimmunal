@@ -2,8 +2,8 @@ const User = require('../../models/User')
 const ErrorResponse = require('../../utils/errorResponse')
 const uuid = require('uuid')
 const mailService = require('./services/mail.service')
-const tokenService = require('./services/token.service')
-const UserDto = require('../../dtos/user.dto')
+const generateAndSaveTokens = require('../../utils/generateAndSaveTokens')
+const Token = require('../../models/Token')
 
 const register = async (req, res, next) => {
 	const { username, email, password } = req.body
@@ -25,16 +25,7 @@ const register = async (req, res, next) => {
 
 		await mailService.sendActivationMail(email, `${process.env.API_URL}/api/auth/activate/${activationLink}`)
 
-		const userDto = new UserDto(user)
-		const tokens = tokenService.generateTokens({ ...userDto })
-		await tokenService.saveToken(userDto.id, tokens.refreshToken)
-
-		res.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true })
-
-		return res.status(201).json({
-			...tokens,
-			user: userDto
-			})
+		return generateAndSaveTokens(user, res)
 	} catch(error) {
 		next(error)
 	}
@@ -76,13 +67,26 @@ const login = async (req, res, next) => {
 		if (!isMatch) {
 			return next(new ErrorResponse("Invalid credentials", 401))
 		}
+
+		return generateAndSaveTokens(user, res)
 	} catch(error) {
 		next(error)
 	}
 }
 
-const logout = (req, res, next) => {
-	res.send("Forgot password route")
+const logout = async (req, res, next) => {
+	try {
+		const { refreshToken } = req.cookies
+
+		await Token.deleteOne({ refreshToken })
+		res.clearCookie('refreshToken')
+
+		return res.status(200).json({
+			ok: true
+		})
+	} catch(error) {
+		next(error)
+	}
 }
 
 const refresh = (req, res, next) => {
