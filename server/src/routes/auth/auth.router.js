@@ -1,10 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
-const { register, login, forgotPassword, resetPassword } = require('./auth.controller')
+const { register, login, forgotPassword, resetPassword, activate, refresh, logout } = require('./auth.controller')
 
 router.post('/register', register)
 router.post('/login', login)
+router.post('/logout', logout)
+router.get('/activate/:link', activate)
+router.get('/refresh', refresh)
 router.post('/forgot-password', forgotPassword)
 router.put('/reset-password/:resetToken', resetPassword)
 
