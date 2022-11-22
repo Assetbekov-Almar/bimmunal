@@ -10,7 +10,8 @@ const app = express()
 
 app.use(express.json())
 
-app.use('/api/auth', require('./controllers/auth/auth.router'))
+app.use('/api/auth', require('./routes/auth/auth.router'))
+app.use('/api/private', require('./routes/private/private.router'))
 
 
 // should be last
