@@ -1,6 +1,8 @@
 require('dotenv').config()
 
 const express = require('express')
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const connectDB = require('./config/db')
 const errorHandler = require('./middleware/error')
 
@@ -9,6 +11,8 @@ connectDB()
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
+app.use(cors())
 
 app.use('/api/auth', require('./routes/auth/auth.router'))
 app.use('/api/private', require('./routes/private/private.router'))

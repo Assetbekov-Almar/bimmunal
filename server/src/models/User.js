@@ -23,6 +23,8 @@ const UserSchema = new mongoose.Schema({
 		minLength: 6,
 		select: false
 	},
+	isActivated: { type: Boolean, default: false },
+	activationLink: { type: String },
 	resetPasswordToken: String,
 	resetPasswordExpire: Date
 })
