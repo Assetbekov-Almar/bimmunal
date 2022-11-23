@@ -4,6 +4,7 @@ const uuid = require('uuid')
 const mailService = require('./services/mail.service')
 const generateAndSaveTokens = require('../../utils/generateAndSaveTokens')
 const Token = require('../../models/Token')
+const jwt = require('jsonwebtoken')
 
 const register = async (req, res, next) => {
 	const { username, email, password } = req.body
@@ -89,8 +90,29 @@ const logout = async (req, res, next) => {
 	}
 }
 
-const refresh = (req, res, next) => {
-	res.send("Reset password route")
+const refresh = async (req, res, next) => {
+	try {
+		const { refreshToken } = req.cookies
+
+		if (!refreshToken) {
+			return next(new ErrorResponse("Unauthorized", 401))
+		}
+
+		const userData  = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
+		const tokenFromDb = await Token.findOne({ refreshToken })
+
+		if (!userData || !tokenFromDb) {
+			return next(new ErrorResponse("Unauthorized", 401))
+		}
+
+		res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+
+		const user = await User.findById(userData.id)
+
+		return generateAndSaveTokens(user, res)
+	} catch(error) {
+		next(error)
+	}
 }
 
 const forgotPassword = (req, res, next) => {
