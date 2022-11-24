@@ -1,0 +1,18 @@
+{
+	"extends": ["stylelint-config-standard", "stylelint-config-prettier"],
+	"plugins": ["stylelint-prettier"],
+	"rules": {
+		"block-no-empty": true,
+		"color-hex-length": null,
+		"rule-empty-line-before": null,
+		"comment-empty-line-before": null,
+		"comment-whitespace-inside": null,
+		"no-descending-specificity": null,
+		"selector-class-pattern": "^([a-zA-Z][a-zA-Z0-9]*)((_|__)[a-zA-Z0-9]+)*$",
+		"keyframes-name-pattern": "^([a-z][a-zA-Z0-9]*)((_|__)[a-zA-Z0-9]+)*$",
+		"color-function-notation": "legacy",
+		"alpha-value-notation": "number",
+		"font-family-name-quotes": "always-where-required",
+		"prettier/prettier": true
+	}
+}
