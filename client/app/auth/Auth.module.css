@@ -29,9 +29,17 @@
 	border-color: red;
 }
 
-.input_feedback {
+.error_text {
 	color: red;
 	margin-top: .25rem;
+}
+
+.form {
+	position: relative;
+	background-color: rgba(238, 238, 238, 0.3);
+	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	padding: 50px 25px;
+	border-radius: 7px;
 }
 
 .form label {
