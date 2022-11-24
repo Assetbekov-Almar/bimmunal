@@ -4,6 +4,7 @@ import { ErrorMessage, Formik } from 'formik'
 import styles from './Auth.module.css'
 import * as Yup from 'yup'
 import { Form, Field } from 'formik'
+import { useMutation } from '@tanstack/react-query'
 
 type State = {
 	email: string
@@ -21,8 +22,18 @@ const validationSchema = Yup.object({
 })
 
 const Auth = () => {
-	const onSubmit = (values: State, submittingObject: any) => {
-		console.log(values)
+	const { mutate } = useMutation((userData: State) => {
+		return fetch('http://localhost:3000/api/auth/login', {
+			method: 'POST',
+			body: JSON.stringify(userData),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+	})
+
+	const onSubmit = (values: State) => {
+		mutate(values)
 	}
 
 	return (
