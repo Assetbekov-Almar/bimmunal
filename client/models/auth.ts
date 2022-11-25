@@ -3,12 +3,14 @@ export type Login = {
 	password: string
 }
 
+export type UserInfo = {
+	email: string
+	id: string
+	isActivated: boolean
+}
+
 export type User = {
 	accessToken: string
 	refreshToken: string
-	user: {
-		email: string
-		id: string
-		isActivated: boolean
-	}
+	user: UserInfo
 }
