@@ -10,7 +10,8 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Login } from '../../models/auth'
 import AuthService from '../../services/api/Auth'
-import { isAccessToken } from '../../utils/checkAccessToken'
+import { getCookie } from 'cookies-next'
+import { headerType } from '../../services/config'
 
 const initialValues: Login = {
 	email: '',
@@ -30,7 +31,7 @@ const AuthForm = () => {
 	const router = useRouter()
 
 	useEffect(() => {
-		if (isAccessToken()) {
+		if (getCookie(headerType.ACCESS_TOKEN)) {
 			router.push('/')
 		}
 	}, [])

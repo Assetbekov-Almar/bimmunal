@@ -2,6 +2,7 @@ import { Login, User } from '../../../models/auth'
 import { authConfig } from './config'
 import { saveTokens } from '../../../utils/saveTokens'
 import { headerType } from '../../config'
+import { cookies } from 'next/headers'
 
 class AuthService {
 	async login(userData: Login) {
@@ -26,14 +27,15 @@ class AuthService {
 		return data
 	}
 
-	async check() {
-		const accessToken = localStorage.getItem(headerType.ACCESS_TOKEN)
+	async check(accessToken: string | undefined) {
 		if (accessToken) {
 			const response = await fetch(authConfig.CHECK, {
 				headers: {
-					accessToken: accessToken,
+					[headerType.ACCESS_TOKEN]: accessToken,
 				},
 			})
+			const data = await response.json()
+			console.log(data)
 			return response.ok
 		}
 		return false
