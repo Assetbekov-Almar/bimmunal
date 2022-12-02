@@ -98,10 +98,9 @@ const check = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { refreshToken } = req.headers;
 
     await Token.deleteOne({ refreshToken });
-    res.clearCookie("refreshToken");
 
     return res.status(200).json({
       ok: true,
@@ -113,23 +112,17 @@ const logout = async (req, res, next) => {
 
 const refresh = async (req, res, next) => {
   try {
-    const { refreshToken } = req.cookies;
-
-    if (!refreshToken) {
+    const { refreshtoken } = req.headers;
+    if (!refreshtoken) {
       return next(new ErrorResponse("Unauthorized", 401));
     }
 
-    const userData = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    const tokenFromDb = await Token.findOne({ refreshToken });
+    const userData = jwt.verify(refreshtoken, process.env.JWT_REFRESH_SECRET);
+    const tokenFromDb = await Token.findOne({ refreshtoken });
 
     if (!userData || !tokenFromDb) {
       return next(new ErrorResponse("Unauthorized", 401));
     }
-
-    res.cookie("refreshToken", userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
 
     const user = await User.findById(userData.id);
 

@@ -5,8 +5,8 @@ const ErrorResponse = require("../utils/errorResponse");
 const protect = async (req, res, next) => {
   let token;
 
-  if (req.headers.access_token) {
-    token = req.headers.access_token;
+  if (req.headers.accesstoken) {
+    token = req.headers.accesstoken;
   }
   if (!token) {
     return next(new ErrorResponse("Not authorized to access this route", 401));
