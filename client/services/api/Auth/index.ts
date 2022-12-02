@@ -34,8 +34,6 @@ class AuthService {
 					[headerType.ACCESS_TOKEN]: accessToken,
 				},
 			})
-			const data = await response.json()
-			console.log(data)
 			return response.ok
 		}
 		return false
