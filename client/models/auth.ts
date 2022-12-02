@@ -9,8 +9,11 @@ export type UserInfo = {
 	isActivated: boolean
 }
 
-export type User = {
+export type Tokens = {
 	accessToken: string
 	refreshToken: string
+}
+
+export type User = Tokens & {
 	user: UserInfo
 }

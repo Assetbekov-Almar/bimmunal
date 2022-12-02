@@ -2,7 +2,6 @@ import { Login, User } from '../../../models/auth'
 import { authConfig } from './config'
 import { saveTokens } from '../../../utils/saveTokens'
 import { headerType } from '../../config'
-import { cookies } from 'next/headers'
 
 class AuthService {
 	async login(userData: Login) {
@@ -27,16 +26,40 @@ class AuthService {
 		return data
 	}
 
-	async check(accessToken: string | undefined) {
-		if (accessToken) {
+	async check(access: string | undefined) {
+		if (access) {
 			const response = await fetch(authConfig.CHECK, {
 				headers: {
-					[headerType.ACCESS_TOKEN]: accessToken,
+					[headerType.ACCESS_TOKEN]: access,
 				},
 			})
+
 			return response.ok
 		}
+
 		return false
+	}
+
+	async refresh(refresh: string | undefined) {
+		if (refresh) {
+			const response = await fetch(authConfig.REFRESH, {
+				headers: {
+					[headerType.REFRESH_TOKEN]: refresh,
+				},
+			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				return { accessToken: '', refreshToken: '' }
+			}
+
+			const { accessToken, refreshToken } = data as User
+
+			return { accessToken, refreshToken }
+		}
+
+		return { accessToken: '', refreshToken: '' }
 	}
 }
 

@@ -4,4 +4,5 @@ const ROUTE = '/api/auth'
 export const authConfig = {
 	LOGIN: `${URL}${ROUTE}/login`,
 	CHECK: `${URL}${ROUTE}/check`,
+	REFRESH: `${URL}${ROUTE}/refresh`,
 }

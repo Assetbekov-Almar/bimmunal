@@ -6,8 +6,8 @@ export const requestType = {
 }
 
 export const headerType = {
-	ACCESS_TOKEN: 'ACCESS_TOKEN',
-	REFRESH_TOKEN: 'REFRESH_TOKEN',
+	ACCESS_TOKEN: 'accessToken',
+	REFRESH_TOKEN: 'refreshToken',
 }
 
 export const statusCodes = {
