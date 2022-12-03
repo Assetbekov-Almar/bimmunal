@@ -1,17 +1,17 @@
 'use client'
 
 import { ErrorMessage, Formik } from 'formik'
-import styles from './Auth.module.css'
+import styles from '../Auth.module.css'
 import * as Yup from 'yup'
 import { Form, Field } from 'formik'
 import { useMutation } from '@tanstack/react-query'
-import Loader from '../../components/Loader'
+import Loader from '../../../components/Loader'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Login } from '../../models/auth'
-import AuthService from '../../services/api/Auth'
+import { Login } from '../../../models/auth'
+import AuthService from '../../../services/api/Auth'
 import { getCookie } from 'cookies-next'
-import { headerType } from '../../services/config'
+import { headerType } from '../../../services/config'
 
 const initialValues: Login = {
 	email: '',

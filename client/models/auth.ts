@@ -17,3 +17,8 @@ export type Tokens = {
 export type User = Tokens & {
 	user: UserInfo
 }
+
+export type Register = Login & {
+	username: string
+	repeatPassword: string
+}
