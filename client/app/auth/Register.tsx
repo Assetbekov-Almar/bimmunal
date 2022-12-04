@@ -1,12 +1,13 @@
 'use client'
 
-import styles from '../Auth.module.css'
+import styles from './Auth.module.css'
 import { ErrorMessage, Formik } from 'formik'
 import * as Yup from 'yup'
 import { Form, Field } from 'formik'
-import { useMutation } from '@tanstack/react-query'
-import Loader from '../../../components/Loader'
-import { Register } from '../../../models/auth'
+import Loader from '../../components/Loader'
+import { Register } from '../../models/auth'
+import { Dispatch, SetStateAction } from 'react'
+import { useAuth } from './useAuth'
 
 const initialValues: Register = {
 	username: '',
@@ -19,20 +20,23 @@ const validationSchema = Yup.object({
 	username: Yup.string().required('Поле не может быть пустым').min(5, 'Минимальная длина 2 символа'),
 	email: Yup.string().email('Невалидный email').required('Поле не может быть пустым'),
 	password: Yup.string().required('Поле не может быть пустым').min(6, 'Минимальная длина 6 символов'),
+	repeatPassword: Yup.string().required('Поле не может быть пустым'),
 })
 
-const Register = () => {
-	const validateConfirmPassword = (pass, value) => {
+type Props = {
+	setIsLoginPage: Dispatch<SetStateAction<boolean>>
+}
+
+const Register = ({ setIsLoginPage }: Props) => {
+	const { onSubmit, isError, error, isLoading } = useAuth()
+
+	const validateConfirmPassword = (pass: string, value: string) => {
 		let error = ''
-		if (pass && value) {
-			if (pass !== value) {
-				error = 'Password not matched'
-			}
+		if (pass && value && pass !== value) {
+			error = 'Пароли не совпадают'
 		}
 		return error
 	}
-
-	const onSubmit = () => {}
 
 	return (
 		<div className={styles.container}>
@@ -40,7 +44,7 @@ const Register = () => {
 				{(formik) => {
 					return (
 						<Form className={styles.form}>
-							{/*{isLoading && <Loader style={'absolute'} />}*/}
+							{isLoading && <Loader style={'absolute'} />}
 							<div>
 								<label htmlFor='username'>Ф.И.О.: </label>
 								<Field
@@ -52,7 +56,7 @@ const Register = () => {
 								/>
 								<ErrorMessage name='username' component='div' className={styles.error_text} />
 							</div>
-							<div>
+							<div style={{ marginTop: '10px' }}>
 								<label htmlFor='email'>Email: </label>
 								<Field
 									type='email'
@@ -84,14 +88,19 @@ const Register = () => {
 											? `${styles.input} ${styles.error}`
 											: styles.input
 									}
-									validate={(value) => validateConfirmPassword(formik.values.password, value)}
+									validate={(value: string) => validateConfirmPassword(formik.values.password, value)}
 								/>
 								<ErrorMessage name='repeatPassword' component='div' className={styles.error_text} />
 							</div>
-							<button type='submit' disabled={!formik.isValid || formik.isSubmitting}>
-								Войти
-							</button>
-							{/*{isError && <div className={styles.error_text}>{error as string}</div>}*/}
+							<div className={styles.form_footer}>
+								<button type='submit' disabled={!formik.isValid || formik.isSubmitting}>
+									Создать
+								</button>
+								<div className={styles.link} onClick={() => setIsLoginPage(true)}>
+									Уже есть аккаунт?
+								</div>
+							</div>
+							{isError && <div className={styles.error_text}>{error as string}</div>}
 						</Form>
 					)
 				}}

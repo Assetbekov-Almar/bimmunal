@@ -1,17 +1,13 @@
 'use client'
 
 import { ErrorMessage, Formik } from 'formik'
-import styles from '../Auth.module.css'
+import styles from './Auth.module.css'
 import * as Yup from 'yup'
 import { Form, Field } from 'formik'
-import { useMutation } from '@tanstack/react-query'
-import Loader from '../../../components/Loader'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Login } from '../../../models/auth'
-import AuthService from '../../../services/api/Auth'
-import { getCookie } from 'cookies-next'
-import { headerType } from '../../../services/config'
+import Loader from '../../components/Loader'
+import { Dispatch, SetStateAction } from 'react'
+import { Login } from '../../models/auth'
+import { useAuth } from './useAuth'
 
 const initialValues: Login = {
 	email: '',
@@ -23,28 +19,12 @@ const validationSchema = Yup.object({
 	password: Yup.string().required('Поле не может быть пустым'),
 })
 
-const Auth = () => {
-	const { mutate, isLoading, isError, isSuccess, error } = useMutation((userData: Login) => {
-		return AuthService.login(userData)
-	})
+type Props = {
+	setIsLoginPage: Dispatch<SetStateAction<boolean>>
+}
 
-	const router = useRouter()
-
-	useEffect(() => {
-		if (getCookie(headerType.ACCESS_TOKEN)) {
-			router.push('/')
-		}
-	}, [])
-
-	useEffect(() => {
-		if (isSuccess) {
-			router.push('/')
-		}
-	}, [isSuccess])
-
-	const onSubmit = (values: Login) => {
-		mutate(values)
-	}
+const Login = ({ setIsLoginPage }: Props) => {
+	const { onSubmit, isError, error, isLoading } = useAuth()
 
 	return (
 		<div className={styles.container}>
@@ -75,9 +55,14 @@ const Auth = () => {
 								/>
 								<ErrorMessage name='password' component='div' className={styles.error_text} />
 							</div>
-							<button type='submit' disabled={!formik.isValid || formik.isSubmitting}>
-								Войти
-							</button>
+							<div className={styles.form_footer}>
+								<button type='submit' disabled={!formik.isValid || formik.isSubmitting}>
+									Войти
+								</button>
+								<div className={styles.link} onClick={() => setIsLoginPage(false)}>
+									Зарегистрироваться
+								</div>
+							</div>
 							{isError && <div className={styles.error_text}>{error as string}</div>}
 						</Form>
 					)
@@ -87,4 +72,4 @@ const Auth = () => {
 	)
 }
 
-export default Auth
+export default Login

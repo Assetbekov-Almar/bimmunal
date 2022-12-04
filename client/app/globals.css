@@ -17,6 +17,7 @@ a {
 
 :root {
   --blue: #0d6efd;
+  --link-blue: #4277d7;
 }
 
 @media (prefers-color-scheme: dark) {
