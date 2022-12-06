@@ -1,16 +1,21 @@
 import { useMutation } from '@tanstack/react-query'
-import { Login, Register } from '../../models/auth'
+import { ForgotPassword, Login, Register } from '../../models/auth'
 import AuthService from '../../services/api/Auth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 export const useAuth = () => {
-	const { mutate, isLoading, isError, isSuccess, error } = useMutation((userData: Login | Register) => {
-		if ('username' in userData) {
-			return AuthService.register(userData)
+	const { mutate, isLoading, isError, isSuccess, error } = useMutation(
+		(userData: Login | Register | ForgotPassword) => {
+			if (Object.keys(userData).length === 1) {
+				return AuthService.getResetPasswordMail(userData as ForgotPassword)
+			}
+			if ('username' in userData) {
+				return AuthService.register(userData)
+			}
+			return AuthService.login(userData as Login)
 		}
-		return AuthService.login(userData)
-	})
+	)
 
 	const router = useRouter()
 
@@ -20,7 +25,7 @@ export const useAuth = () => {
 		}
 	}, [isSuccess])
 
-	const onSubmit = (values: Login) => {
+	const onSubmit = (values: Login | Register | ForgotPassword) => {
 		mutate(values)
 	}
 

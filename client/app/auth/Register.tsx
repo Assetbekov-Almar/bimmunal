@@ -8,6 +8,7 @@ import Loader from '../../components/Loader'
 import { Register } from '../../models/auth'
 import { Dispatch, SetStateAction } from 'react'
 import { useAuth } from './useAuth'
+import { LOGIN } from './constants'
 
 const initialValues: Register = {
 	username: '',
@@ -24,10 +25,10 @@ const validationSchema = Yup.object({
 })
 
 type Props = {
-	setIsLoginPage: Dispatch<SetStateAction<boolean>>
+	setCurrentPage: Dispatch<SetStateAction<string>>
 }
 
-const Register = ({ setIsLoginPage }: Props) => {
+const Register = ({ setCurrentPage }: Props) => {
 	const { onSubmit, isError, error, isLoading } = useAuth()
 
 	const validateConfirmPassword = (pass: string, value: string) => {
@@ -96,7 +97,7 @@ const Register = ({ setIsLoginPage }: Props) => {
 								<button type='submit' disabled={!formik.isValid || formik.isSubmitting}>
 									Создать
 								</button>
-								<div className={styles.link} onClick={() => setIsLoginPage(true)}>
+								<div className={styles.link} onClick={() => setCurrentPage(LOGIN)}>
 									Уже есть аккаунт?
 								</div>
 							</div>

@@ -8,6 +8,7 @@ import Loader from '../../components/Loader'
 import { Dispatch, SetStateAction } from 'react'
 import { Login } from '../../models/auth'
 import { useAuth } from './useAuth'
+import { FORGOT_PASSWORD, REGISTER } from './constants'
 
 const initialValues: Login = {
 	email: '',
@@ -20,10 +21,10 @@ const validationSchema = Yup.object({
 })
 
 type Props = {
-	setIsLoginPage: Dispatch<SetStateAction<boolean>>
+	setCurrentPage: Dispatch<SetStateAction<string>>
 }
 
-const Login = ({ setIsLoginPage }: Props) => {
+const Login = ({ setCurrentPage }: Props) => {
 	const { onSubmit, isError, error, isLoading } = useAuth()
 
 	return (
@@ -59,8 +60,13 @@ const Login = ({ setIsLoginPage }: Props) => {
 								<button type='submit' disabled={!formik.isValid || formik.isSubmitting}>
 									Войти
 								</button>
-								<div className={styles.link} onClick={() => setIsLoginPage(false)}>
-									Зарегистрироваться
+								<div>
+									<div className={styles.link} onClick={() => setCurrentPage(FORGOT_PASSWORD)}>
+										Забыли пароль?
+									</div>
+									<div className={styles.link} onClick={() => setCurrentPage(REGISTER)}>
+										Зарегистрироваться
+									</div>
 								</div>
 							</div>
 							{isError && <div className={styles.error_text}>{error as string}</div>}
