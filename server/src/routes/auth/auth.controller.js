@@ -136,7 +136,7 @@ const refresh = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return next(new ErrorResponse("Email not found", 404));
@@ -149,7 +149,7 @@ const forgotPassword = async (req, res, next) => {
     try {
       await mailService.sendResetPasswordMail(
         email,
-        `${process.env.API_URL}/api/auth/reset-password/${resetToken}`
+        `${process.env.CLIENT_URL}/api/auth/${resetToken}`
       );
 
       res.status(200).json({ ok: true });
