@@ -7,6 +7,7 @@ const Token = require("../../models/Token");
 const jwt = require("jsonwebtoken");
 const UserDto = require("../../dtos/user.dto");
 const protect = require("../../middleware/auth");
+const crypto = require("crypto");
 
 const register = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -132,12 +133,69 @@ const refresh = async (req, res, next) => {
   }
 };
 
-const forgotPassword = (req, res, next) => {
-  res.send("Forgot password route");
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = User.findOne({ email });
+
+    if (!user) {
+      return next(new ErrorResponse("Email not found", 404));
+    }
+
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save();
+
+    try {
+      await mailService.sendResetPasswordMail(
+        email,
+        `${process.env.API_URL}/api/auth/reset-password/${resetToken}`
+      );
+
+      res.status(200).json({ ok: true });
+    } catch (error) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+
+      await user.save();
+
+      return next(new ErrorResponse("Email could not be sent", 500));
+    }
+
+    await user.save();
+  } catch (error) {
+    next(error);
+  }
 };
 
-const resetPassword = (req, res, next) => {
-  res.send("Reset password route");
+const resetPassword = async (req, res, next) => {
+  try {
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(req.params.resetToken)
+      .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(new ErrorResponse("Invalid reset token", 400));
+    }
+
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    return res.status(201).json({
+      ok: true,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
