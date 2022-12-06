@@ -9,6 +9,7 @@ import { Register } from '../../models/auth'
 import { Dispatch, SetStateAction } from 'react'
 import { useAuth } from './useAuth'
 import { LOGIN } from './constants'
+import { validateMatchPasswords } from './validateMatchPasswords'
 
 const initialValues: Register = {
 	username: '',
@@ -30,14 +31,6 @@ type Props = {
 
 const Register = ({ setCurrentPage }: Props) => {
 	const { onSubmit, isError, error, isLoading } = useAuth()
-
-	const validateConfirmPassword = (pass: string, value: string) => {
-		let error = ''
-		if (pass && value && pass !== value) {
-			error = 'Пароли не совпадают'
-		}
-		return error
-	}
 
 	return (
 		<div className={styles.container}>
@@ -89,7 +82,7 @@ const Register = ({ setCurrentPage }: Props) => {
 											? `${styles.input} ${styles.error}`
 											: styles.input
 									}
-									validate={(value: string) => validateConfirmPassword(formik.values.password, value)}
+									validate={(value: string) => validateMatchPasswords(formik.values.password, value)}
 								/>
 								<ErrorMessage name='repeatPassword' component='div' className={styles.error_text} />
 							</div>

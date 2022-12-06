@@ -1,4 +1,4 @@
-import { ForgotPassword, Login, Register, User } from '../../../models/auth'
+import { ForgotPassword, Login, Register, ResetPassword, User } from '../../../models/auth'
 import { authConfig } from './config'
 import { saveTokens } from '../../../utils/saveTokens'
 import { headerType } from '../../config'
@@ -53,6 +53,25 @@ class AuthService {
 		const response = await fetch(authConfig.FORGOT_PASSWORD, {
 			method: 'POST',
 			body: JSON.stringify(userData),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+
+		const data = await response.json()
+
+		if (!response.ok) {
+			throw (data as { error: string }).error
+		}
+
+		return data
+	}
+
+	async resetPassword(userData: ResetPassword) {
+		const { resetToken, ...rest } = userData
+		const response = await fetch(authConfig.RESET_PASSWORD + '/' + resetToken, {
+			method: 'PUT',
+			body: JSON.stringify(rest),
 			headers: {
 				'Content-Type': 'application/json',
 			},

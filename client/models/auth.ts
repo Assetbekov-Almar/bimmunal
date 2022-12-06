@@ -23,8 +23,14 @@ export type Register = Login & {
 	repeatPassword: string
 }
 
-export type ForgotPassword = Omit<Login, 'password'>
-
-export type ResetPassword = Login & {
-	repeatPassword: string
+export type ForgotPassword = {
+	email: string
 }
+
+export type ResetPassword = {
+	password: string
+	repeatPassword: string
+	resetToken?: string
+}
+
+export type Auth = Login | Register | ForgotPassword | ResetPassword

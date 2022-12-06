@@ -8,7 +8,7 @@ import { getCookie } from 'cookies-next'
 import { headerType } from '../../services/config'
 import { FORGOT_PASSWORD, LOGIN, REGISTER, RESET_PASSWORD } from './constants'
 import ForgotPassword from './ForgotPassword'
-import ResetPassword from './ResetPassword'
+import ResetPassword from './[resetToken]/page'
 
 const Auth = () => {
 	const [currentPage, setCurrentPage] = useState(LOGIN)
@@ -29,7 +29,7 @@ const Auth = () => {
 		case FORGOT_PASSWORD:
 			return <ForgotPassword />
 		case RESET_PASSWORD:
-			return <ResetPassword setCurrentPage={setCurrentPage} />
+			return <ResetPassword />
 		default:
 			return <Login setCurrentPage={setCurrentPage} />
 	}

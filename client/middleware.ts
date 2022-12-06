@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
 
 	const tokens: Tokens = await AuthService.refresh(refreshToken)
 
-	if (pathname === '/auth' && !tokens.accessToken) {
+	if (pathname.includes('/auth') && !tokens.accessToken) {
 		return NextResponse.next()
 	}
 
