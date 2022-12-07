@@ -158,6 +158,7 @@ const forgotPassword = async (req, res, next) => {
       user.resetPasswordExpire = undefined;
 
       await user.save();
+      console.log(error);
 
       return next(new ErrorResponse("Email could not be sent", 500));
     }
