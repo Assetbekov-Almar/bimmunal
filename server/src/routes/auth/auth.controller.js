@@ -51,7 +51,7 @@ const activate = async (req, res, next) => {
     user.isActivated = true;
     await user.save();
 
-    return res.redirect("http://ya.ru");
+    return res.redirect(process.env.CLIENT_URL);
   } catch (error) {
     next(error);
   }
@@ -149,7 +149,7 @@ const forgotPassword = async (req, res, next) => {
     try {
       await mailService.sendResetPasswordMail(
         email,
-        `${process.env.CLIENT_URL}/api/auth/${resetToken}`
+        `${process.env.CLIENT_URL}/auth/${resetToken}`
       );
 
       res.status(200).json({ ok: true });
