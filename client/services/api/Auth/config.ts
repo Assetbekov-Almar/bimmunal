@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3000'
+const URL = 'https://magma10.herokuapp.com'
 const ROUTE = '/api/auth'
 
 export const authConfig = {

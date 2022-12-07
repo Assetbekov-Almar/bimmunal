@@ -108,11 +108,11 @@ class AuthService {
 				},
 			})
 
-			const data = await response.json()
-
 			if (!response.ok) {
 				return { accessToken: '', refreshToken: '' }
 			}
+
+			const data = await response.json()
 
 			const { accessToken, refreshToken } = data as User
 
